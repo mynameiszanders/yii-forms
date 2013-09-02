@@ -1,6 +1,8 @@
 Yii Forms
 =========
 
+*Version: 1.0.0*
+
 A collection of components classes for Yii forms to provide cross-theme rendering of form inputs, without having to know
 the types of inputs that were defined in form configuration files.
 
