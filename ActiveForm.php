@@ -13,6 +13,7 @@
      * @copyright   2013 Zander Baldwin
      * @license     MIT/X11 <http://j.mp/license>
      * @package     application.components
+     * @since       1.0.0
      */
     class ActiveForm extends \CActiveForm
     {
