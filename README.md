@@ -1,10 +1,10 @@
 Yii Forms
 =========
 
-*Version: 2.0.0*
+*Version: 2.0.1*
 
 A collection of component classes for Yii forms to provide cross-theme rendering of form inputs, without having to know
-the types of inputs that were defined in form configuration files. With version 2.0.0 this repository is now a
+the types of inputs that were defined in form configuration files. Since version 2.0.0 this repository is a
 [Composer](http://getcomposer.org "Dependency Manager for PHP") library package installable via
 [Packagist](https://packagist.org/packages/mynameiszanders/yii-forms "The PHP package archivist."). Simply add it as a
 dependancy of your projects with `composer require mynameiszanders/yii-forms:2.*` or add the following to your

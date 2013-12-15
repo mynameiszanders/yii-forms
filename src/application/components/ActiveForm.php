@@ -283,7 +283,7 @@
          * @param array $htmlOptions
          * @return string
          */
-        public function dateField(\CModel $model, $attribute, $htmlOptions = array())
+        public function dateField($model, $attribute, $htmlOptions = array())
         {
             $this->convertTimestamp($model, $attribute);
             return parent::dateField($model, $attribute, $htmlOptions);
