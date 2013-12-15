@@ -32,8 +32,8 @@
             if(!isset($form->elements[$attribute])) {
                 throw new CException(
                     is_string($attribute)
-                        ? Yii::t('system60', 'Invalid form element identifier "{element}" was passed to "application\\components\\Form.input()".', array('{element}' => $attribute))
-                        : Yii::t('system60', 'Invalid data type passed to "application\\components\\Form.input()". A string is required to identify a form element.')
+                        ? Yii::t('application', 'Invalid form element identifier "{element}" was passed to "application\\components\\Form.input()".', array('{element}' => $attribute))
+                        : Yii::t('application', 'Invalid data type passed to "application\\components\\Form.input()". A string is required to identify a form element.')
                 );
             }
             // Assign the $element variable the instance of the actual element, instead of just its string identifier.
@@ -80,8 +80,8 @@
             if(!isset($form->buttons[$attribute])) {
                 throw new CException(
                     is_string($attribute)
-                        ? Yii::t('system60', 'Invalid form button identifier "{button}" was passed to "application\\components\\Form.button()".', array('{button}' => $attribute))
-                        : Yii::t('system60', 'Invalid data type passed to "application\\components\\Form.button()". A string is required to identify a form button.')
+                        ? Yii::t('application', 'Invalid form button identifier "{button}" was passed to "application\\components\\Form.button()".', array('{button}' => $attribute))
+                        : Yii::t('application', 'Invalid data type passed to "application\\components\\Form.button()". A string is required to identify a form button.')
                 );
             }
             // Assign the $button variable the instance of the actual button, instead of just its string identifier.
