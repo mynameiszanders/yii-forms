@@ -174,6 +174,24 @@
 
 
         /**
+         * Has Error?
+         *
+         * A wrapper for the hasErrors() method in the form model class, CFormModel, as a shortcut.
+         *
+         * @access public
+         * @param CForm|CModel $formModel
+         * @return boolean
+         */
+        public function hasError($formModel, $attribute)
+        {
+            if($formModel instanceof \CForm && isset($formModel->model) && $formModel->model instanceof \CModel) {
+                $formModel = $formModel->model;
+            }
+            return $formModel->hasErrors($attribute);
+        }
+
+
+        /**
          * Error
          *
          * A wrapper for the error() method in the parent class, CActiveForm, to allow for form objects to be passed as
