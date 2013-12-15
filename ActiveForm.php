@@ -44,6 +44,15 @@
                 // Merge the HTML options passed with the attributes set in the form configuration, this is also used to
                 // override options in the form configuration on a per-theme basis.
                 $htmlOptions = \CMap::mergeArray($element->attributes, $htmlOptions);
+                // If the form element is of type "date" or "time", or the corresponding active field methods are going
+                // to be used, convert any timestamps into RFC3339 format for their HTML5 input elements to work
+                // correctly.
+                if($element->type == 'date' || $method == 'activeDateField') {
+                    $this->convertTimestamp($form->model, $element->name, 'Y-m-d');
+                }
+                elseif($element->type == 'time' || $method == 'activeTimeField') {
+                    $this->convertTimestamp($form->model, $element->name, 'H:i');
+                }
                 // Render element.
                 return strpos($method, 'List') !== false
                     // If the method contains the word "List", then it means that it needs items to populate that list.
@@ -258,6 +267,45 @@
             return is_string($tag)
                 ? \CHtml::tag($tag, $htmlOptions, $form->elements[$attribute]->hint)
                 : $form->elements[$attribute]->hint;
+        }
+
+
+        /**
+         * Date Field
+         *
+         * Renders a date field for a model attribute (automatically converting timestamps into RFC3339 date format).
+         * This method is a wrapper of `CHtml::activeDateField` which you should check for detailed information about
+         * the parameters for this method.
+         *
+         * @access public
+         * @param CModel $model
+         * @param string $attribute
+         * @param array $htmlOptions
+         * @return string
+         */
+        public function dateField(\CModel $model, $attribute, $htmlOptions = array())
+        {
+            $this->convertTimestamp($model, $attribute);
+            return parent::dateField($model, $attribute, $htmlOptions);
+        }
+
+
+        /**
+         * Convert Timestamp
+         *
+         * If the model attribute is a timestamp (an integer), then convert it into RFC3339 format for use in HTML5's
+         * date or time input fields.
+         *
+         * @access public
+         * @param CModel $model
+         * @param string $attribute
+         * @return void
+         */
+        public function convertTimestamp(\CModel $model, $attribute, $format = 'Y-m-d')
+        {
+            if(isset($model->$attribute) && preg_match('/^\\-?[1-9]\\d*$/', $model->$attribute)) {
+                $model->$attribute = date($format, $model->$attribute);
+            }
         }
 
     }
