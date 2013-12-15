@@ -13,7 +13,6 @@
      * @copyright   2013 Zander Baldwin
      * @license     MIT/X11 <http://j.mp/license>
      * @package     application.components
-     * @since       1.0.0
      */
     class ActiveForm extends \CActiveForm
     {
@@ -33,8 +32,8 @@
             if(!isset($form->elements[$attribute])) {
                 throw new CException(
                     is_string($attribute)
-                        ? Yii::t('system60', 'Invalid form element identifier "{element}" was passed to "application\\components\\Form.input()".', array('{element}' => $attribute))
-                        : Yii::t('system60', 'Invalid data type passed to "application\\components\\Form.input()". A string is required to identify a form element.')
+                        ? Yii::t('application', 'Invalid form element identifier "{element}" was passed to "application\\components\\Form.input()".', array('{element}' => $attribute))
+                        : Yii::t('application', 'Invalid data type passed to "application\\components\\Form.input()". A string is required to identify a form element.')
                 );
             }
             // Assign the $element variable the instance of the actual element, instead of just its string identifier.
@@ -45,6 +44,15 @@
                 // Merge the HTML options passed with the attributes set in the form configuration, this is also used to
                 // override options in the form configuration on a per-theme basis.
                 $htmlOptions = \CMap::mergeArray($element->attributes, $htmlOptions);
+                // If the form element is of type "date" or "time", or the corresponding active field methods are going
+                // to be used, convert any timestamps into RFC3339 format for their HTML5 input elements to work
+                // correctly.
+                if($element->type == 'date' || $method == 'activeDateField') {
+                    $this->convertTimestamp($form->model, $element->name, 'Y-m-d');
+                }
+                elseif($element->type == 'time' || $method == 'activeTimeField') {
+                    $this->convertTimestamp($form->model, $element->name, 'H:i');
+                }
                 // Render element.
                 return strpos($method, 'List') !== false
                     // If the method contains the word "List", then it means that it needs items to populate that list.
@@ -81,8 +89,8 @@
             if(!isset($form->buttons[$attribute])) {
                 throw new CException(
                     is_string($attribute)
-                        ? Yii::t('system60', 'Invalid form button identifier "{button}" was passed to "application\\components\\Form.button()".', array('{button}' => $attribute))
-                        : Yii::t('system60', 'Invalid data type passed to "application\\components\\Form.button()". A string is required to identify a form button.')
+                        ? Yii::t('application', 'Invalid form button identifier "{button}" was passed to "application\\components\\Form.button()".', array('{button}' => $attribute))
+                        : Yii::t('application', 'Invalid data type passed to "application\\components\\Form.button()". A string is required to identify a form button.')
                 );
             }
             // Assign the $button variable the instance of the actual button, instead of just its string identifier.
@@ -175,6 +183,24 @@
 
 
         /**
+         * Has Error?
+         *
+         * A wrapper for the hasErrors() method in the form model class, CFormModel, as a shortcut.
+         *
+         * @access public
+         * @param CForm|CModel $formModel
+         * @return boolean
+         */
+        public function hasError($formModel, $attribute)
+        {
+            if($formModel instanceof \CForm && isset($formModel->model) && $formModel->model instanceof \CModel) {
+                $formModel = $formModel->model;
+            }
+            return $formModel->hasErrors($attribute);
+        }
+
+
+        /**
          * Error
          *
          * A wrapper for the error() method in the parent class, CActiveForm, to allow for form objects to be passed as
@@ -241,6 +267,45 @@
             return is_string($tag)
                 ? \CHtml::tag($tag, $htmlOptions, $form->elements[$attribute]->hint)
                 : $form->elements[$attribute]->hint;
+        }
+
+
+        /**
+         * Date Field
+         *
+         * Renders a date field for a model attribute (automatically converting timestamps into RFC3339 date format).
+         * This method is a wrapper of `CHtml::activeDateField` which you should check for detailed information about
+         * the parameters for this method.
+         *
+         * @access public
+         * @param CModel $model
+         * @param string $attribute
+         * @param array $htmlOptions
+         * @return string
+         */
+        public function dateField(\CModel $model, $attribute, $htmlOptions = array())
+        {
+            $this->convertTimestamp($model, $attribute);
+            return parent::dateField($model, $attribute, $htmlOptions);
+        }
+
+
+        /**
+         * Convert Timestamp
+         *
+         * If the model attribute is a timestamp (an integer), then convert it into RFC3339 format for use in HTML5's
+         * date or time input fields.
+         *
+         * @access public
+         * @param CModel $model
+         * @param string $attribute
+         * @return void
+         */
+        public function convertTimestamp(\CModel $model, $attribute, $format = 'Y-m-d')
+        {
+            if(isset($model->$attribute) && preg_match('/^\\-?[1-9]\\d*$/', $model->$attribute)) {
+                $model->$attribute = date($format, $model->$attribute);
+            }
         }
 
     }
